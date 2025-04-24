@@ -1,20 +1,25 @@
 <script>
-// Verificar autenticación en páginas protegidas
+// Verificar si hay usuario logueado
 document.addEventListener('DOMContentLoaded', () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const logoutBtn = document.getElementById('logoutBtn');
   
-  // Si está en una página de portafolio y no está autenticado
-  if (window.location.pathname.startsWith('/portfolio/') && !currentUser) {
-    window.location.href = '/login';
+  // Mostrar/ocultar botón de logout
+  if (logoutBtn) {
+    if (currentUser) {
+      logoutBtn.style.display = 'inline';
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        window.location.href = '/';
+      });
+    } else {
+      logoutBtn.style.display = 'none';
+    }
   }
   
-  // Verificar que el usuario tenga acceso a este portafolio específico
-  if (window.location.pathname.startsWith('/portfolio/')) {
-    const requestedMember = window.location.pathname.split('/')[2];
-    if (currentUser?.memberId !== requestedMember) {
-      alert('No tienes acceso a este portafolio');
-      window.location.href = '/login';
-    }
+  // Proteger rutas si es necesario
+  if (window.location.pathname.startsWith('/portfolio/') && !currentUser) {
+    window.location.href = '/login';
   }
 });
 </script>
