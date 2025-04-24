@@ -30,32 +30,17 @@ defaults:
       type: "pages"
     values:
       layout: "default"
-      auth_required: true # Protección por defecto
   
   - scope:
       path: "portfolio"
       type: "members"
     values:
       layout: "member"
-      auth_required: true
 
-# Excepciones de Autenticación
-auth_exceptions:
-  - /login
-  - /api/login
-  - /assets
-  - /_data
-
-# Configuración ORM
+# Configuración ORM (para nuestra implementación personalizada)
 database:
   members_path: "_data/members.json"
   users_path: "_data/users.json"
-  sessions_path: "_data/sessions.json"
-
-# Configuración de Seguridad
-security:
-  password_min_length: 8
-  session_timeout: 3600 # 1 hora en segundos
 
 # Exclusions (importante para GitHub Pages)
 exclude:
