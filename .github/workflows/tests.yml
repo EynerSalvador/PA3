@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Tests
 
 on: [push, pull_request]
 
@@ -6,21 +6,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.0'
-    - name: Run tests
-      run: ruby _spec/member_spec.rb
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build and deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./_site
+        ruby-version: '3.1'
+    - name: Run tests via Rake
+      run: |
+        bundle install
+        bundle exec rake
