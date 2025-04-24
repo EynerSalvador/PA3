@@ -1,25 +1,33 @@
-<script>
-// Verificar si hay usuario logueado
-document.addEventListener('DOMContentLoaded', () => {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  const logoutBtn = document.getElementById('logoutBtn');
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  {% include nav.html %}
   
-  // Mostrar/ocultar botón de logout
-  if (logoutBtn) {
-    if (currentUser) {
-      logoutBtn.style.display = 'inline';
-      logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = '/';
-      });
-    } else {
-      logoutBtn.style.display = 'none';
+  <main>
+    {{ content }}
+  </main>
+
+  <script>
+  // Verificar autenticación
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (currentUser && logoutBtn) {
+      logoutBtn.style.display = 'block';
     }
-  }
-  
-  // Proteger rutas si es necesario
-  if (window.location.pathname.startsWith('/portfolio/') && !currentUser) {
-    window.location.href = '/login';
-  }
-});
-</script>
+    
+    // Redirigir a login si intentan acceder a contenido protegido sin autenticación
+    if (window.location.pathname.startsWith('/portfolio/') && !currentUser) {
+      window.location.href = '/login';
+    }
+  });
+  </script>
+</body>
+</html>
