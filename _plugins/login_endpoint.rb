@@ -1,70 +1,81 @@
-module Jekyll
-  class LoginEndpoint < Generator
-    safe true
-    priority :high
+require 'sinatra/base'
+require 'json'
+require 'jwt'
+require_relative '../../lib/auth/auth_service'
 
-    def generate(site)
-      # Registrar el endpoint solo en entornos de desarrollo
-      if Jekyll.env == "development"
-        site.pages << LoginApiPage.new(site)
-      end
-    end
+class LoginApp < Sinatra::Base
+  configure do
+    set :auth_service, AuthService.new(File.join(Dir.pwd, '_data', 'users.json'))
+    enable :sessions
+    set :show_exceptions, false
+    set :jwt_secret, ENV['JWT_SECRET'] || 'your_default_secret_here'
   end
 
-  class LoginApiPage < Page
-    def initialize(site)
-      @site = site
-      @base = site.source
-      @dir  = 'api'
-      @name = 'login.json'
+  before do
+    content_type :json
+  end
 
-      self.process(@name)
-      self.content = '{}'
-      self.data = {
-        'layout' => nil,
-        'permalink' => '/api/login/',
-        'sitemap' => false
-      }
+  error 400..500 do
+    { error: env['sinatra.error'].message }.to_json
+  end
+
+  post '/api/login' do
+    data = JSON.parse(request.body.read)
+    username = data['username']
+    password = data['password']
+
+    user = settings.auth_service.authenticate(username, password)
+
+    if user
+      token = generate_jwt(user)
+      { 
+        success: true, 
+        token: token,
+        user: { 
+          username: user.username,
+          email: user.email,
+          role: user.role
+        }
+      }.to_json
+    else
+      status 401
+      { success: false, error: 'Credenciales inválidas' }.to_json
     end
+  rescue JSON::ParserError
+    status 400
+    { error: 'Formato JSON inválido' }.to_json
+  end
 
-    def render_with_payload(payload)
-      # Este método se ejecutará cuando se llame al endpoint
-      request = payload['request']
-      
-      # Solo responder a solicitudes POST
-      if request&.post?
-        auth_service = AuthService.new
-        data = JSON.parse(request.body.read) rescue {}
-        
-        result = auth_service.login(data['username'], data['password'])
-        
-        if result[:success]
-          {
-            success: true,
-            token: generate_jwt(result[:user]),
-            user: result[:user].to_h
-          }.to_json
-        else
-          {
-            success: false,
-            error: result[:error]
-          }.to_json
-        end
-      else
-        { error: "Método no permitido" }.to_json
-      end
+  get '/api/current_user' do
+    if request.env['HTTP_AUTHORIZATION']
+      token = request.env['HTTP_AUTHORIZATION'].split(' ').last
+      decoded = decode_jwt(token)
+      { logged_in: true, user: decoded }.to_json
+    else
+      { logged_in: false }.to_json
     end
+  rescue JWT::DecodeError
+    status 401
+    { error: 'Token inválido' }.to_json
+  end
 
-    private
+  post '/api/logout' do
+    { success: true, message: 'Sesión cerrada' }.to_json
+  end
 
-    def generate_jwt(user)
-      payload = {
-        user_id: user[:id],
-        member_id: user[:member_id],
-        exp: Time.now.to_i + 3600 # Expira en 1 hora
-      }
-      
-      JWT.encode(payload, ENV['JWT_SECRET'] || 'secreto_por_defecto', 'HS256')
-    end
+  private
+
+  def generate_jwt(user)
+    payload = {
+      user_id: user.username,
+      role: user.role,
+      exp: Time.now.to_i + 3600 # 1 hora de expiración
+    }
+    JWT.encode(payload, settings.jwt_secret, 'HS256')
+  end
+
+  def decode_jwt(token)
+    decoded = JWT.decode(token, settings.jwt_secret, true, { algorithm: 'HS256' })
+    decoded.first
   end
 end
