@@ -1,0 +1,24 @@
+---
+layout: default
+---
+
+<script>
+// Verificación adicional por si JavaScript está deshabilitado
+const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+const memberId = '{{ page.name | slugify }}';
+
+if (!currentUser || currentUser.memberId !== memberId) {
+  document.body.innerHTML = `
+    <div style="padding: 2rem; text-align: center;">
+      <h2>Acceso no autorizado</h2>
+      <p>Por favor <a href="/login">inicia sesión</a> para ver este portafolio.</p>
+    </div>
+  `;
+}
+</script>
+
+<!-- Contenido del portafolio -->
+<div class="member-portfolio">
+  <h1>{{ page.name }}</h1>
+  {{ content }}
+</div>
