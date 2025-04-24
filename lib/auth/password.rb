@@ -8,4 +8,4 @@ module Password
   def self.valid?(hash, password)
     BCrypt::Password.new(hash) == password
   end
-end
+end 
