@@ -1,12 +1,7 @@
 # Rakefile
 require 'rake'
-
-# Configura el load path para que encuentre tus archivos en lib/
-$LOAD_PATH.unshift(File.expand_path('lib', __dir__))
-
-# Ahora usa require normal (no require_relative)
-require 'models/database'
-require 'models/member'
+require File.expand_path('../lib/models/database', __dir__)
+require File.expand_path('../lib/models/member', __dir__)
 
 task :default => :test
 
@@ -24,5 +19,5 @@ task :test do
   Member.create(db, member_data)
   db.save
   
-  puts "Miembro creado exitosamente en _data/members.json"
+  puts "Miembro creado exitosamente!"
 end
