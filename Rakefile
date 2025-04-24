@@ -1,14 +1,18 @@
 # Rakefile
 require 'rake'
-require_relative 'lib/models/database'
-require_relative 'lib/models/member'
+
+# Configura el load path para que encuentre tus archivos en lib/
+$LOAD_PATH.unshift(File.expand_path('lib', __dir__))
+
+# Ahora usa require normal (no require_relative)
+require 'models/database'
+require 'models/member'
 
 task :default => :test
 
 task :test do
   db = Database.new('_data/members.json')
   
-  # Use string keys to be consistent
   member_data = {
     'id' => 1,
     'name' => "Test Member",
@@ -20,5 +24,5 @@ task :test do
   Member.create(db, member_data)
   db.save
   
-  puts "Test member created successfully in _data/members.json"
+  puts "Miembro creado exitosamente en _data/members.json"
 end
