@@ -1,28 +1,23 @@
+# lib/models/database.rb
 require 'json'
 
-class JSONDatabase
-  def initialize(file_path = '_data/members.json')
+class Database
+  attr_reader :data
+
+  def initialize(file_path)
     @file_path = file_path
-    load_data
+    @data = load_data
   end
-
-  def all_members
-    @data['members'] || []
-  end
-
-  def add_member(member_data)
-    @data['members'] ||= []
-    @data['members'] << member_data
-    save_data
-  end
-
-  private
 
   def load_data
-    @data = File.exist?(@file_path) ? JSON.parse(File.read(@file_path)) : {}
+    if File.exist?(@file_path)
+      JSON.parse(File.read(@file_path))
+    else
+      { 'members' => [] } # Initialize with string key
+    end
   end
 
-  def save_data
+  def save
     File.write(@file_path, JSON.pretty_generate(@data))
   end
 end
