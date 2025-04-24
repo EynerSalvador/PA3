@@ -1,0 +1,16 @@
+title: "Portafolio Grupal Profesional"
+description: "Nuestros perfiles profesionales"
+baseurl: ""
+url: "https://tusuario.github.io/portafolio-jekyll"
+
+theme: minima
+
+plugins:
+  - jekyll-feed
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
