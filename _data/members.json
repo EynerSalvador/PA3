@@ -2,9 +2,15 @@
   "members": [
     {
       "name": "Ana López",
-      "role": "Desarrolladora",
-      "skills": ["Ruby", "JavaScript"],
-      "bio": "Especialista en backend"
+      "role": "Frontend Developer",
+      "skills": ["JavaScript", "React"],
+      "bio": "Especialista en interfaces de usuario"
+    },
+    {
+      "name": "Pedro Méndez",
+      "role": "DevOps Engineer",
+      "skills": ["Docker", "AWS"],
+      "bio": "Experto en infraestructura cloud"
     }
   ]
 }
