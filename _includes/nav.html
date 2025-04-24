@@ -1,5 +1,16 @@
-<nav>
+<nav class="site-nav">
   <a href="/">Inicio</a> | 
   <a href="/members">Miembros</a>
-  <button id="logoutBtn" style="display: none; margin-left: 10px;">Cerrar sesión</button>
+  <button id="logoutBtn" style="display: none; margin-left: 10px;" 
+          onclick="localStorage.removeItem('currentUser'); window.location.href='/'">
+    Cerrar sesión
+  </button>
 </nav>
+
+<style>
+.site-nav {
+  padding: 1rem;
+  background: #f5f5f5;
+  margin-bottom: 2rem;
+}
+</style>
