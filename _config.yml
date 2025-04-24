@@ -1,16 +1,73 @@
+# Configuración Básica
 title: "Portafolio Grupal Profesional"
-description: "Nuestros perfiles profesionales"
-baseurl: ""
-url: "https://tusuario.github.io/portafolio-jekyll"
+description: "Acceso seguro a portafolios profesionales"
+baseurl: "" # Usar "/repo" si no es el repo principal
+url: "https://tusuario.github.io" # Reemplazar con tu URL real
 
+# Configuración Técnica
 theme: minima
+port: 4000
+timezone: America/Mexico_City
+future: false
 
+# Plugins Esenciales
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-auth
+  - _plugins # Nuestros plugins personalizados
 
+# Configuración de Collections
+collections:
+  members:
+    output: true
+    permalink: /portfolio/:name/
+  users:
+    output: false # Los usuarios no generan páginas
+
+# Configuración de Defaults
 defaults:
   - scope:
       path: ""
       type: "pages"
     values:
       layout: "default"
+      auth_required: true # Protección por defecto
+  
+  - scope:
+      path: "portfolio"
+      type: "members"
+    values:
+      layout: "member"
+      auth_required: true
+
+# Excepciones de Autenticación
+auth_exceptions:
+  - /login
+  - /api/login
+  - /assets
+  - /_data
+
+# Configuración ORM
+database:
+  members_path: "_data/members.json"
+  users_path: "_data/users.json"
+  sessions_path: "_data/sessions.json"
+
+# Configuración de Seguridad
+security:
+  password_min_length: 8
+  session_timeout: 3600 # 1 hora en segundos
+
+# Exclusions (importante para GitHub Pages)
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+  - node_modules/
+  - vendor/
+  - .bundle/
+  - .github/
+  - _spec/
+  - lib/
+  - docker-compose.yml
