@@ -1,15 +1,20 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ page.title | default: site.title }}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% include head.html %}
-</head>
-<body>
-  {% include nav.html %}
-  <main>
-    {{ content }}
-  </main>
-</body>
-</html>
+<script>
+// Verificar autenticación en páginas protegidas
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  
+  // Si está en una página de portafolio y no está autenticado
+  if (window.location.pathname.startsWith('/portfolio/') && !currentUser) {
+    window.location.href = '/login';
+  }
+  
+  // Verificar que el usuario tenga acceso a este portafolio específico
+  if (window.location.pathname.startsWith('/portfolio/')) {
+    const requestedMember = window.location.pathname.split('/')[2];
+    if (currentUser?.memberId !== requestedMember) {
+      alert('No tienes acceso a este portafolio');
+      window.location.href = '/login';
+    }
+  }
+});
+</script>
