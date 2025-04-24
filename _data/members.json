@@ -1,0 +1,10 @@
+{
+  "members": [
+    {
+      "name": "Ana López",
+      "role": "Desarrolladora",
+      "skills": ["Ruby", "JavaScript"],
+      "bio": "Especialista en backend"
+    }
+  ]
+}
