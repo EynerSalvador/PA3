@@ -1,67 +1,90 @@
-<div class="login-form">
-  <h3>Acceso al Portafolio</h3>
+<div class="login-form-container">
+  <h2>Acceso al Portafolio</h2>
   <form id="loginForm">
     <div class="form-group">
-      <label>Usuario:</label>
-      <input type="text" name="username" required>
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" name="username" required>
     </div>
     <div class="form-group">
-      <label>Contraseña:</label>
-      <input type="password" name="password" required>
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required>
     </div>
-    <button type="submit">Ingresar</button>
-    <div id="loginError" class="error-message"></div>
+    <button type="submit" class="login-button">Ingresar</button>
+    <div id="loginMessage" class="message"></div>
   </form>
 </div>
 
 <script>
-// Usuarios válidos (en producción debería venir de una API)
+// Datos de usuarios (solo para demostración)
 const validUsers = {
-  "ana": { password: "P@ssw0rd1", memberId: "ana_lopez" },
-  "pedro": { password: "P@ssw0rd2", memberId: "pedro_mendez" }
+  "ana": { password: "ana123", memberId: "ana_lopez" },
+  "pedro": { password: "pedro123", memberId: "pedro_mendez" }
 };
 
-document.getElementById('loginForm').addEventListener('submit', (e) => {
+document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const username = e.target.username.value;
-  const password = e.target.password.value;
-
+  
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
   if (validUsers[username] && validUsers[username].password === password) {
     // Guardar sesión
     localStorage.setItem('currentUser', JSON.stringify({
-      username,
+      username: username,
       memberId: validUsers[username].memberId
     }));
     
-    // Redirigir a la página principal
+    // Recargar la página
     window.location.href = '/';
   } else {
-    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('loginMessage').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('loginMessage').style.color = 'red';
   }
 });
 </script>
 
 <style>
-.login-form {
+.login-form-container {
   max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
+
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
+
 .form-group input {
   width: 100%;
-  padding: 8px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
-.error-message {
-  color: red;
-  margin-top: 10px;
+
+.login-button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.message {
+  margin-top: 1rem;
+  text-align: center;
 }
 </style>
