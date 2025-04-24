@@ -1,11 +1,15 @@
 require 'jekyll'
 require 'rack/rewrite'
-require_relative '_plugins/login_endpoint'
+require_relative '_plugins/custom_auth'
 
-# Configuración básica
-use Rack::Static, urls: ['/assets'], root: '_site'
+Jekyll::Hooks.register :site, :after_init do |site|
+  # Configuraciones adicionales si son necesarias
+end
 
-run Rack::URLMap.new(
-  '/api' => LoginApp,
-  '/' => Jekyll::Site.new
-)
+map '/api' do
+  run AuthApp
+end
+
+map '/' do
+  run Jekyll::Site.new
+end
