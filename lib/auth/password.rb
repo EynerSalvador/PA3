@@ -1,10 +1,11 @@
 require 'bcrypt'
 
 module Password
-  def self.create(password)
-    BCrypt::Password.create(password).to_s
+  def self.hash(password)
+    BCrypt::Password.create(password)
   end
 
   def self.valid?(hash, password)
     BCrypt::Password.new(hash) == password
   end
+end
