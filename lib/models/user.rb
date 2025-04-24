@@ -1,25 +1,24 @@
 class User
-  attr_reader :id, :username, :email, :role
+  attr_reader :id, :username, :email, :member_id
 
   def initialize(attributes = {})
-    @id = attributes[:id] || SecureRandom.uuid
-    @username = attributes[:username]
-    @email = attributes[:email]
-    @password_hash = attributes[:password_hash]
-    @role = attributes[:role] || 'member'
+    @id = attributes['id']
+    @username = attributes['username']
+    @email = attributes['email']
+    @member_id = attributes['member_id']
+    @password_hash = attributes['password_hash']
   end
 
   def authenticate(password)
     Password.valid?(@password_hash, password)
   end
 
-  def to_json(*args)
+  def to_h
     {
       id: @id,
       username: @username,
       email: @email,
-      password_hash: @password_hash,
-      role: @role
-    }.to_json(*args)
+      member_id: @member_id
+    }
   end
 end
