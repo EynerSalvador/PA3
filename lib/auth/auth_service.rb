@@ -1,41 +1,30 @@
-require_relative 'password'
+require 'json'
 require_relative '../models/user'
-require_relative '../models/database'
+require_relative 'password'
 
 class AuthService
-  def initialize(db = JSONDatabase.new('_data/users.json'))
-    @db = db
+  def initialize(users_file)
+    @users_file = users_file
+    @users = load_users
   end
 
-  def register(username, email, password, member_id)
-    existing = @db.find_user_by_username(username)
-    return { error: "Usuario ya existe" } if existing
-
-    user = {
-      id: SecureRandom.uuid,
-      username: username,
-      email: email,
-      password_hash: Password.hash(password),
-      member_id: member_id,
-      created_at: Time.now.iso8601
-    }
-
-    @db.create('users', user)
-    { success: true, user: user }
+  def authenticate(username, password)
+    user = @users.find { |u| u.username == username }
+    user && user.authenticate(password) ? user : nil
   end
 
-  def login(username, password)
-    user = @db.find_user_by_username(username)
-    return { error: "Usuario no encontrado" } unless user
+  private
 
-    if Password.valid?(user['password_hash'], password)
-      { success: true, user: user }
-    else
-      { error: "Contraseña incorrecta" }
+  def load_users
+    return [] unless File.exist?(@users_file)
+    
+    JSON.parse(File.read(@users_file)).map do |user_data|
+      User.new(
+        user_data['username'],
+        user_data['password_hash'],
+        user_data['email'],
+        user_data['role'] || 'member'
+      )
     end
-  end
-
-  def find_by_member(member_id)
-    @db.where('users', { member_id: member_id }).first
   end
 end
